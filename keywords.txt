@@ -1,0 +1,21 @@
+#######################################
+# Syntax Coloring Map For DigitSeparator
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DigitSeparator	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+digitSeparate	KEYWORD2
+digitSeparateU	KEYWORD2
+digitSeparateD	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
