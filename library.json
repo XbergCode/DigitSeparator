@@ -1,0 +1,23 @@
+{
+  "name": "DigitSeparator",
+  "keywords": "Digit Separator",
+  "description": "Arduino library to separate digit value with marks and returns it as C string. e.g. 1.000.000,123 ",
+  "authors":
+  [
+    {
+      "name": "XbergCode",
+      "email": "xberg88@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/XbergCode/DigitSeparator"
+  },
+  "version": "0.1.1",
+  "license": "MIT",
+  "frameworks": "arduino",
+  "platforms": "*",
+  "headers": "DigitSeparator.h"
+}
