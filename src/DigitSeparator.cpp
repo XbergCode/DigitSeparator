@@ -1,12 +1,13 @@
-
 //    FILE: DigitSeparator.cpp
 //  AUTHOR: XbergCode
-// VERSION: 0.1.1
+// VERSION: 0.1.2
 // PURPOSE: Digit Separator library for Arduino. Separates digit value with marks and returns it as C string.
 //     URL: https://github.com/XbergCode/DigitSeparator
 //
 // HISTORY
 //  0.1.1  13/08/2022  Initial version
+//  0.1.2  14/07/2023  Fixed values that starts with 0 did not show, Integer in digitSeparateD needed "fabs()".
+//                     Added default Thousand & Decimal mark's to the library.
 
 #include "DigitSeparator.h"                           // Include The Digit Separator Header
 
@@ -16,9 +17,11 @@ char * digitSeparate(int64_t Integer, char ThousandSeparator) {   // Digit Separ
   static char OUT[32];                                                   // Out String
   uint8_t index = 0U;                                                    // String Place Counter
   uint8_t pos = 0U;                                                      // Separator Position Counter
+  // Add Zero To The String
+  if (Integer == 0) OUT[index++] = '0';                                  // Add Zero To The String
   
   bool negative = Integer < 0;                                           // Check If The Value Is Negative
-  if (negative) Integer = -Integer;
+  if (negative) Integer =- Integer;
   
   // Make The String
   while (Integer > 0) {                                                  // Add The Integer To The String
@@ -42,6 +45,8 @@ char * digitSeparateU(uint64_t Integer, char ThousandSeparator) { // Digit Separ
   static char OUT[32];                                                   // Out String
   uint8_t index = 0U;                                                    // String Place Counter
   uint8_t pos = 0U;                                                      // Separator Position Counter
+  // Add Zero To The String
+  if (Integer == 0) OUT[index++] = '0';                                  // Add Zero To The String
   
   // Make The String
   while (Integer > 0) {                                                  // Add The Integer To The String
@@ -61,7 +66,7 @@ char * digitSeparateU(uint64_t Integer, char ThousandSeparator) { // Digit Separ
   return OUT;                                                            // Return The String
 }
 char * digitSeparateD(const double IN, const uint8_t Dec, char ThousandSeparator, char DecimalSeparator) {  // Digit Separator - Double & Float
-  int64_t Integer = IN;                                                  // Integer Holder "0,"
+  uint64_t Integer = fabs(IN);                                           // Integer Holder "0,"
   uint32_t Decimal;                                                      // Decimal Holder ",0"
   // Find Out The Decimal
   if (Dec >= 1U) {                                                       // Find Out The Decimal Value
@@ -73,23 +78,20 @@ char * digitSeparateD(const double IN, const uint8_t Dec, char ThousandSeparator
     else if (Dec == 5U) Decimals = 100000U;                              // @ ,00000
     else if (Dec == 6U) Decimals = 1000000U;                             // @ ,000000
     else Decimals = 10U;                                                 // Set To ,0
-    Decimal = round ((IN - Integer) * Decimals);                         // Get The Decimal Value
-    if ((IN - Integer) * Decimals >= 9U && Decimal == 10U) {             // Decimal Was Rounded From 9 To 0
+    Decimal = round ((fabs(IN) - Integer) * Decimals);                   // Get The Decimal Value
+    if ((fabs(IN) - Integer) * Decimals >= 9U && Decimal == 10U) {       // Decimal Was Rounded From 9 To 0
       Integer = Integer + 1U;                                            // Add One To The Integer
       Decimal = 0U;                                                      // Decimal Is 0
     }
   }
   else {                                                                 // No Decimal Value, Check If It Needs Rounding
-    Decimal = (IN - Integer) * 100U;                                     // Get The Decimal Value ,00
-    if (Decimal >= 49U) Integer = Integer + 1U;                          // If We Are Over ,49 Then Add One To The Integer Value
+    Decimal = (fabs(IN) - Integer) * 100U;                               // Get The Decimal Value ,00
+    if (Decimal > 49U) Integer = Integer + 1U;                           // If We Are Over ,49 Then Add One To The Integer Value
   }
   
   static char OUT[32];                                                   // Out String
   uint8_t index = 0U;                                                    // String Place Counter
   uint8_t pos = 0U;                                                      // Separator Position Counter
-  
-  bool negative = Integer < 0;                                           // Check If The Value Is Negative
-  if (negative) Integer = -Integer;
   
   // Make The String
   if (Dec >= 1U) {                                                       // Add The Decimal To The String
@@ -107,7 +109,12 @@ char * digitSeparateD(const double IN, const uint8_t Dec, char ThousandSeparator
     OUT[index++] = (Integer % 10) + '0';
     Integer /= 10;
   }
-  if (negative) OUT[index++] = '-';                                      // Add The Negative Mark To The String
+
+  // Add Zero To The String
+  if (IN <= 0.999999999999 && IN > -1.0) OUT[index++] = '0';             // Add Zero To The String
+
+  // Add The Negative Mark
+  if (IN < 0.0) OUT[index++] = '-';                                      // Add The Negative Mark To The String
   OUT[index] = '\0';                                                     // Null Terminate The String
   
   // Reverse The String
